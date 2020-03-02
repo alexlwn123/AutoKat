@@ -583,29 +583,28 @@ def parse_config(config):
     sys.exit(0)
   return (username, token)
 
-
 def main():
   global verbose
   # add command line args
   arg_parser = argparse.ArgumentParser()
-  arg_parser.add_argument("-g", "--get", metavar="problem-id", help="get a kattis problem")
-  arg_parser.add_argument("-r", "--run", metavar="problem-id", help="run the test cases for a given problem")
+#  arg_parser.add_argument("-g", "--get", metavar="problem-id", help="get a kattis problem")
+#  arg_parser.add_argument("-r", "--run", metavar="problem-id", help="run the test cases for a given problem")
   arg_parser.add_argument("-p", "--post", metavar="problem-id", help="submit a kattis problem")
   arg_parser.add_argument("-v", "--verbose", help="make output verbose", action="store_true")
   args = arg_parser.parse_args()
   verbose = args.verbose
 
-  if args.get:
-    r = requests.get("https://open.kattis.com/problems/" + args.get)
-    if re.findall("We&#039;re sorry, Kattis couldn&#039", r.text):
-      print("Invalid Problem ID")
-      print("Please select a valid problem ID at https://open.kattis.com")
-      print("Aborting...")
-      sys.exit(0)
-    get(args.get)
-
-  if args.run:
-    run(args.run)
+#  if args.get:
+#    r = requests.get("https://open.kattis.com/problems/" + args.get)
+#    if re.findall("We&#039;re sorry, Kattis couldn&#039", r.text):
+#      print("Invalid Problem ID")
+#      print("Please select a valid problem ID at https://open.kattis.com")
+#      print("Aborting...")
+#      sys.exit(0)
+#    get(args.get)
+#
+#  if args.run:
+#    run(args.run)
   if args.post:
     post(args.post)
 
