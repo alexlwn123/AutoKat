@@ -48,19 +48,23 @@ KattisHack
 ----------
 
 - We've talked about building this for a while now...  
-- This script clones a git repo of kattis solutions and automatically submits them all.
+- This script clones a git repo of Kattis solutions and automatically submits them all.
 
 - Usage: 
    - `python3 KattisHack.py -c [URL OF GIT REPO]`
    - Must have your `.kattisrc` in the same directory as `KattisHack.py`.
-   - It works using any repo **that uses problem ids as file names**. The script will bring all solution files to the root directry of the repository upon cloning. 
+   - It works using any repo **that uses problem ids as file names**. The script will bring all solution files to the root directory of the repository upon cloning. 
    - The program saves a list of solved problems to avoid duplicate submissions. It stores the list in `.\data\solved.txt`.
 
 - Notes:
    1. This is cheating.
-   2. I'd recomend using an alternate account, as using this will completely deauthenticate your legeitamite work. 
+   2. I'd recommend using an alternate account, as using this will completely deauthenticate your legitimate work. 
    3. After running this on a fresh account for couple of days, it accumulated over 2500 points, landing the account in the top 50 of the world. [Account](https://open.kattis.com/users/i-cheated)
    4. I'm betting that Kattis will ban my account any day now. Use at your own risk.
+
+- UPDATE:
+   - After 48 hours, Kattis removed the account from the leaderboards due to plagiarised. Very impressive response time.
+   - Thinking about ways to incorporate an obfuscater as a workaround...
 
 
 
