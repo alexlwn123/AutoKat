@@ -57,7 +57,7 @@ Usage: AutoKat.py [-h] [-p problem-id] [-v] [-c url] [-o] [-l] [-u]
 optional arguments:
     -h, --help            show this help message and exit
     -p problem-id, --post problem-id
-    submit a kattis problem
+                          submit a kattis problem
     -v, --verbose         make output verbose
     -c url, --cheat url   get git repo/ submit problems
     -o, --obfuscate       Obfuscates solutions before submitting
