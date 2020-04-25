@@ -50,7 +50,20 @@ KattisHack
 - We've talked about building this for a while now...  
 - This script clones a git repo of Kattis solutions and automatically submits them all.
 - UPDATE: Added support for code obfuscation. Adapted existing cpp obfuscator. [Original Repo](https://github.com/chickensouple/CPlusPlus-TextObfucater)
+```
+Usage: AutoKat.py [-h] [-p problem-id] [-v] [-c url] [-o] [-l] [-u]
 
+
+optional arguments:
+    -h, --help            show this help message and exit
+    -p problem-id, --post problem-id
+    submit a kattis problem
+    -v, --verbose         make output verbose
+    -c url, --cheat url   get git repo/ submit problems
+    -o, --obfuscate       Obfuscates solutions before submitting
+    -l, --list            lists solved problems
+    -u, --update          update ratings of solved problem
+```
 - Usage: 
    - `python3 KattisHack.py -c [URL OF GIT REPO]`
    - Use the -o flag for obfuscation (Only cpp currently supported)
