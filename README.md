@@ -49,9 +49,11 @@ KattisHack
 
 - We've talked about building this for a while now...  
 - This script clones a git repo of Kattis solutions and automatically submits them all.
+- UPDATE: Added support for code obfuscation. Adapted existing cpp obfuscator. [Original Repo](https://github.com/chickensouple/CPlusPlus-TextObfucater)
 
 - Usage: 
    - `python3 KattisHack.py -c [URL OF GIT REPO]`
+   - Use the -o flag for obfuscation (Only cpp currently supported)
    - Must have your `.kattisrc` in the same directory as `KattisHack.py`.
    - It works using any repo **that uses problem ids as file names**. The script will bring all solution files to the root directory of the repository upon cloning. 
    - The program saves a list of solved problems to avoid duplicate submissions. It stores the list in `.\data\solved.txt`.
@@ -60,11 +62,12 @@ KattisHack
    1. This is cheating.
    2. I'd recommend using an alternate account, as using this will completely deauthenticate your legitimate work. 
    3. After running this on a fresh account for couple of days, it accumulated over 2500 points, landing the account in the top 50 of the world. [Account](https://open.kattis.com/users/i-cheated)
-   4. I'm betting that Kattis will ban my account any day now. Use at your own risk.
+   4. I'm betting that Kattis will ban my account any day now. Use at your own risk. [DONE]
 
 - UPDATE:
    - After 48 hours, Kattis removed the account from the leaderboards due to plagiarised. Very impressive response time.
-   - Thinking about ways to incorporate an obfuscater as a workaround...
+   - I've started another account using the obfuscator on all submissions. I'm curious to see if this will lengthen the time it takes for Kattis to remove the account.
+
 
 
 

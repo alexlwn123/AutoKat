@@ -51,6 +51,9 @@ _extension_to_lang = {
   ".c": "C",
   ".cs": "C#"
 }
+_supported_obf_langs = {
+    "C++"
+}
 
 # headers for submission
 _HEADERS = { "User-Agent": "kattis-cli-submit" }
@@ -63,7 +66,7 @@ _STATUS_URL = "https://open.kattis.com/submissions/"
 # maximum number of times to check a submissions status
 MAX_SUBMISSION_CHECKS = 30
 
-SOLVED = set()
+global SOLVED 
 
 """
 Helper function for cheat.
@@ -82,17 +85,56 @@ def load_solves():
 
   print('Opening solved.txt')
   with open('data\\solved.txt', 'r') as f:
-    problems = f.read().splitlines()
-    SOLVED.update(problems)
+    lines = f.read().splitlines()
+    lines = [line.split() for line in lines if line]
+    global SOLVED
+    SOLVED = {line[0]: None if len(line)<=1 else line[1] for line in lines}
+
+"""
+Looks up all solved problem's 
+ratings and stores in solved.txt
+"""
+def update_ratings():
+  load_solves()
+  score = 0
+  print(SOLVED)
+  input('HERE')
+  for problem in SOLVED.keys():
+    print('Getting rating for ' + problem)
+    rating = get_rating(problem)
+    print(str(rating))
+    score += float(rating)
+    SOLVED[problem] = rating
+
+  print(SOLVED)
+  print(f'Total Score: {score:.2f} points')
+  input('Replace solved.txt? (hit enter to continue)')
+  if not score:
+    return
+
+  with open('data\\solved.txt', 'w+') as f:
+    out = [' '.join(list(map(str, item))) for item in SOLVED.items()]
+    f.write('\n'.join(out))
+    print('\n'.join(out))
+    print("Written")
+
+
+
+def get_rating(problem_id):
+  r = requests.get("https://open.kattis.com/problems/" + problem_id)
+  search = re.findall("Difficulty:[ </>a-z]*[0-9]\.[0-9]", r.text)[0]
+  rating = search.split('>')[-1]
+  return rating
 
 """
 Helper function for cheat.
 Appends newly solved problem id to solved.txt
 """
 def write_solve(problem):
-  SOLVED.add(problem)
+  rating = get_rating(problem)
+  SOLVED[problem] = rating
   with open('..\\data\\solved.txt', 'a') as f:
-    f.write('\n' + problem)
+    f.write('\n{} {}'.format(problem, rating))
   print('')
 
 
@@ -130,11 +172,38 @@ def unpack_dir(path):
       os.system('rmdir /S /Q "{}"'.format(direct.path))
   print('Done Unpacking')
 
-def get_rating(problem_id):
-  r = requests.get("https://open.kattis.com/problems/" + problem_id)
-  search = re.findall("Difficulty:[ </>a-z]*[0-9]\.[0-9]", r.text)[0]
-  rating = search.split('>')[-1]
-  return rating
+def check_obfuse(name, lang):
+  supported_check = {'C++'}
+  if lang not in supported_check:
+    print('{} not supported for checking obfuse'.format(lang))
+    sys.exit(0)
+
+  with open(name, 'r') as f:
+    line = f.readline()
+    if lang == 'C++':
+      return line == "//Obfuscated\n"
+
+def obfuscate(problem_id, path, lang):
+  if lang == 'Python':
+    input('obfuscating python?')
+    os.system('pyarmor obfuscate {}'.format(path))
+    input('move file?')
+    os.system('move dist\\{} .'.format(problem_id+'.py'))
+    input('moved file, remove dist?')
+    os.system('rmdir /S dist')
+  if lang == 'C++':
+    if path is None:
+      print('problem: {} , path: {} , lang: {}'.format(problem_id, path, lang))
+      input('Check')
+      print("Path is None... Moving on.")
+      return
+    text_path = "..\\data\\ObfuscateText.txt"
+    obfuscater_path = "..\\CPlusPlus-TextObfucater\\main.py"
+    os.system('python "{}" "{}" "{}" ".\\out.cpp"'.format(obfuscater_path, path, text_path))
+    time.sleep(1)
+    os.system('del '+ path)
+    os.system('rename {} {}'.format('out.cpp', path[path.rfind('\\')+1:]))
+
 
 def cheat(url):
   print("Cheat method")
@@ -266,6 +335,15 @@ def post(problem, name=None):
     version = determine_python_version(problem + extension if name is None else name)
     lang = "Python " + str(version)
   
+  if obfuse:
+    if lang not in _supported_obf_langs:
+      print(lang, "not supported for obfuscation... Skipping")
+      return 0
+    if check_obfuse(name, lang):
+      print('Already Obfuscated')
+    else:
+      print('Obfuscating')
+      obfuscate(problem, name, lang)
   submission_files = [problem + extension if name is None else name]
 
   try:
@@ -295,7 +373,7 @@ def post(problem, name=None):
     print('Waiting 10 seconds before trying again...\n')
     time.sleep(10)
     print('Submitting', problem if name is None else name)
-    return post(problem)
+    return post(problem, name)
   
   if plain_text_response.startswith('Problem not found.'):
     print('Invalid Problem id...')
@@ -493,20 +571,30 @@ def _list():
   print('Solved problems:')
   with open(".\\data\\solved.txt", 'r') as f:
     problems = f.read().splitlines()
+    score = 0
+    for item in problems:
+      p, r = item.split()
+      score += float(r)
+      
+
     print(', '.join(problems))
     print(f'Total: {len(problems)} solves')
-    
+    print(f'Score: {score:.1f}')
 
 def main():
   global verbose
+  global obfuse
   # add command line args
   arg_parser = argparse.ArgumentParser()
 
   arg_parser.add_argument("-p", "--post", metavar="problem-id", help="submit a kattis problem")
   arg_parser.add_argument("-v", "--verbose", help="make output verbose", action="store_true")
   arg_parser.add_argument("-c", "--cheat", metavar="url", help="get git repo/ submit problems")
+  arg_parser.add_argument("-o", "--obfuscate",action="store_true", help="Obfuscates solutions before submitting")
   arg_parser.add_argument("-l", "--list", help="lists solved problems", action="store_true")
+  arg_parser.add_argument("-u", "--update", help="update ratings of solved problems", action="store_true")
   args = arg_parser.parse_args()
+  obfuse = args.obfuscate
   verbose = args.verbose
 
   if args.post:
@@ -515,6 +603,8 @@ def main():
     cheat(args.cheat)
   if args.list:
     _list() 
+  if args.update:
+    update_ratings()
 
 
 if __name__ == "__main__":
